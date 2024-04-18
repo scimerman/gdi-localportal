@@ -7,9 +7,8 @@ VERBOSE=0
 
 REMS_URL="http://rems:3000"
 
-PORTAL_URL="http://molgenis:8080"
-#PORTAL_URL_REDIRECT="${PORTAL_URL}"
-PORTAL_URL_REDIRECT="http://localhost:8080"        # currently we redirect to localhost:8080
+PORTAL_URL="\${GDI_PORTAL_INTERNAL_URL}"
+PORTAL_URL_REDIRECT="\${GDI_PORTAL_PUBLIC_URL}"
 PORTAL_DATABASE="${GDI_PORTAL_NAME:-gdiportal}"
 PORTAL_TABLE="Dataset"
 PORTAL_READER="portalreader"

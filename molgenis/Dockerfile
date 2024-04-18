@@ -1,7 +1,8 @@
-FROM molgenis/molgenis-emx2:v10.0.0
+FROM molgenis/molgenis-emx2:v10.58.2
 
 WORKDIR /opt/molgenis
 
+RUN  apt-get update
 RUN apt-get -y install vim jq && apt-get clean all
 
 COPY --chmod=0755 ./*.template ./*.sh ./*.csv ./
