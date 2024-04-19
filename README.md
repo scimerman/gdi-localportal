@@ -157,7 +157,53 @@ to delete the database folder and recrete an empty folder to store the future da
 
 # Overview diagram
 
-The service calls and scripts connected are shown here.
+## The proxy overview
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    user: 
+    priv_net: private network
+    pub_net: public network
+    state priv_net {
+        molgenis
+        rems
+        keycloak
+        proxy
+        postgres
+    }
+    state pub_net {
+        user
+        proxy
+    }
+    state postgres {
+        postgres_5432: 5432
+    }
+    state molgenis {
+        molgenis_80: 80
+    }
+    state rems {
+        rems_3000: 3000
+    }
+    state keycloak {
+        keycloak_9000: 9000
+    }
+    proxy: reverse proxy
+    state proxy {
+        proxy_3000: 3000
+        proxy_8080: 8080
+        proxy_9000: 9000
+    }
+    proxy_3000 --> rems_3000
+    proxy_9000 --> keycloak_9000
+    proxy_8080 --> molgenis_80
+    user --> proxy_8080
+    user --> proxy_3000
+    user --> proxy_9000
+```
+
+
+## The service calls and scripts connected
 
 ```mermaid
 stateDiagram-v2
