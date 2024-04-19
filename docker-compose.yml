@@ -88,6 +88,7 @@ services:
     build:
       context: ./molgenis/
       args:
+        # All values are set in .env, list here are the ones that are actually mapped to docker
         GDI_PORTAL_NAME:
         REMS_OWNER_EMAIL:
         REMS_PORTALBOT_KEY:
@@ -100,6 +101,7 @@ services:
         MOLGENIS_OIDC_CLIENT_SECRET:
         MOLGENIS_OIDC_DISCOVERY_URI:
         MOLGENIS_OIDC_CALLBACK_URL:
+        MOLGENIS_EXCLUDE_PETSTORE_DEMO:
         GDI_PORTAL_INTERNAL_URL:
         GDI_PORTAL_PUBLIC_URL:
     hostname: molgenis
