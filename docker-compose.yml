@@ -4,8 +4,6 @@ services:
   postgres:
     image: postgres:14-alpine
     hostname: postgres
-#    ports:
-#      - 5432:5432
     networks:
       - private-net
     environment:
@@ -25,24 +23,17 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.3
     hostname: keycloak
-#    ports:
-#      - 9000
     networks:
       - private-net
     entrypoint: /bin/bash -c "/opt/keycloak/bin/kc.sh import --optimized --dir /opt/keycloak/import && /opt/keycloak/bin/kc.sh start --proxy-headers=forwarded --http-port=9000 --hostname-url=http://localhost:9000 --hostname-admin-url=http://localhost:9000"
-    # entrypoint: /bin/bash -c "/opt/keycloak/bin/kc.sh import --optimized --dir /opt/keycloak/import && /opt/keycloak/bin/kc.sh start-dev --proxy=edge --hostname-strict=false --hostname-strict-https=false --http-port 9000"
-    # entrypoint: /bin/bash -c "sleep 100000"
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-      # KEYCLOAK
       # behind reverse proxy, see https://www.keycloak.org/server/reverseproxy
       # Old format
       - KC_PROXY=edge
       # New format
       - KC_PROXY_HEADERS=forwarded
-      ## hostname
-      #- KC_HOSTNAME_URL=proxy
     volumes:
     - ./keycloak/import:/opt/keycloak/import
     depends_on:
@@ -64,8 +55,6 @@ services:
         REMS_PORTALBOT_KEY:
         PORTAL_DATABASE:
     hostname: rems
-#    ports:
-#      - 3000
     networks:
       - private-net
     depends_on:
@@ -105,8 +94,6 @@ services:
         GDI_PORTAL_INTERNAL_URL:
         GDI_PORTAL_PUBLIC_URL:
     hostname: molgenis
-#    ports:
-#      - 8080
     networks:
       - private-net
     environment:
@@ -132,10 +119,7 @@ services:
   proxy:
     image: nginx:1.25.4-alpine-slim
     ports:
-#      - "80:80"
-#      - "443:443"
       - "0.0.0.0:3000:3000"
-#      - "0.0.0.0:5432:5432"
       - "0.0.0.0:8080:8080"
       - "0.0.0.0:8443:8443"
       - "0.0.0.0:9000:9000"
