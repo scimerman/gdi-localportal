@@ -22,23 +22,22 @@ Clone the repository and navigate to proof-of-concept branch
     $ git clone https://github.com/molgenis/gdi-localportal
     $ cd gdi-localportal
 
-The `keycloak` hostname should point to the localhost `127.0.0.1` - by adding on the machine that is running docker compose in the `/etc/hosts` file
-
-```
-    127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4 keycloak
-```
-
 After the docker service has been started, you can spin up the docker compose
 
+```
     $ docker compose up -d
+```
 
 (the build time is approx. 4 min on slower hosts - after that the instances still need to configure the services, which takes additional 2 minutes or so)
 
-Ports exposed on the host machine are
- - `3000` for rems
- - `5432` for postgres
- - `8080` for molgenis
- - `9000` for keycloak
+With the new update (v2) all the services are behind a reverse proxy and accessable on the `localhost`:`service_port`
+
+ - Molgenis          http://localhost:8080
+ - Rems              http://localhost:3000
+ - Keycloak          http://localhost:9000
+ - Postgres is avaialble on port `5432`, but only within docker-compose private network
+
+The `keycloak` hostname doen not need to be defined in the `/etc/hosts` file anymore.
 
 ## First use of the Localportal
 
@@ -51,7 +50,7 @@ Showing how to add and change the Datasets into Molgenis, and how that gets upda
 Localportal
 
  - navigate to [Localportal](http://localhost:8080/)
- - use right to site `Sign In` > you will be redirected to [keycloak](http://keycloak:9000)
+ - use right to site `Sign In` > you will be redirected to [keycloak](http://localhost:9000)
    - the use username is `lportaluser` and the password `lportalpass`
  - go to [gdiportal](http://localhost:8080/gdiportal/) - it is already pre-populated with example data 
    - check the table [Dataset](http://localhost:8080/gdiportal/tables/#/Dataset)
@@ -83,10 +82,15 @@ Localportal - gportal
 
 If you wish to check the additional logs inside the instances, you can use (example for Localportal)
 
+```
     $ docker compose exec localportal /bin/bash
+```
 
 The instances have stored their installation files and the output of those installations inside
+
+```
     /opt/[instance name]/
+```
 
 users per service
 
@@ -98,31 +102,35 @@ services are in /opt/{servicename} folders
 ## Molgenis / Localportal
 
 localhost:8080 > signin
-    lportaluser
-    lportalpass
+    default username: lportaluser
+    default password: lportalpass
 
+Checking logs for molgenis service
 
-Logs for localportal
+```
     docker compose exec localportal /bin/bash
     root# cat /opt/localportal/install.sh.log
+```
 
 ## REMS
 
 Increase synchronization script verbosity:
+
+```
     $ docker compose exec rems /bin/bash
     root# echo VERBOSE=2 >> /opt/rems/synchronization.config
     root# source /opt/rems/synchronization.sh
-
+```
 
 ## Keycloak
 
-Is avaialable on http://keycloak:9000 (or http://localhost:9000 )
+Avaialable on http://localhost:9000
 
-You can modify the existing lportaluser or make a new one, by loging into Keycloak
+You can modify the existing `lportaluser` or make a new one, by loging into [Keycloak](http://localhost:9000)
  - go to Administration Console and use default keycloak admin username `admin` and password `admin`
  - switch realm from `master` to `lportal`
    - here you can modify lportalclient ( client > lportalclient )
-   - or modify users ( Users > lportaluser   
+   - or modify users ( Users > lportaluser )
 
 
 ## Postgres
@@ -137,6 +145,7 @@ In case you wish to delete the postgress data and start with fresh instance, you
 ```
     $ sudo rm -rf postgres/psql_data/ ; mkdir postgres/psql_data/
 ```
+
 to delete the database folder and recrete an empty folder to store the future data.
 
 # Cleanup
